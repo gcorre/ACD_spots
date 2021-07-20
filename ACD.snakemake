@@ -1,0 +1,33 @@
+import os;
+
+from glob import glob;
+
+
+
+FILES = glob("*z**ch*.tif");
+
+
+SAMPLE = [re.sub('_z[0-9]+_.+$','',w) for w in FILES];
+SAMPLE = list(set(SAMPLE));
+
+Z = [re.search('_([z0-9]+)_ch',w).group(1) for w in FILES];
+CHANNEL = [re.search('_([ch0-9]+).tif',w).group(1) for w in FILES];
+
+
+
+def get_R1(wildcards):
+	x = sorted(glob(wildcards.NAME +"_z.+.tif"))
+	x = [re.sub('_z[0-9]+_.+$','',w) for w in x];
+	x = list(set(x));
+	return x
+
+rule all:
+	input : expand("{sample}_Zmax.tif", sample = SAMPLE)
+
+
+rule Zmax:
+	input : get_R1
+	output : "{NAME}_Zmax.tif"
+	shell : """
+			xvfb-run -a /opt/Fiji/ImageJ-linux64 --ij2 -macro ~/projets/image_processing/pipelines/ACD.ijm "{input}"
+			"""
