@@ -1,2 +1,2 @@
 # ACD_spots
-spots counting in muscle cross sections
+ImageJ macro for muscle fibers segmentation and spot counting in cross-setions.
